@@ -391,7 +391,13 @@ export const DATA = {
         "Data Pipelines",
         "Azure",
       ],
-      links: [],
+      links: [
+        {
+          type: "Blog",
+          href: "https://siddharth7669.vercel.app/blog/optimizing-data-pipelines-with-python-ETL-Azure",
+          icon: <Icons.globe className="size-3" />,
+        }
+      ],
       image: "",
     },
   ],
