@@ -363,7 +363,13 @@ export const DATA = {
         "Prompt Engineering",
         "Multilingual AI",
       ],
-      links: [],
+      links: [
+        {
+          type: "Website",
+          href: "https://ashtanghridayam.vercel.app/",
+          icon: <Icons.globe className="size-3" />,
+        }
+      ],
       image: "",
     },
 
