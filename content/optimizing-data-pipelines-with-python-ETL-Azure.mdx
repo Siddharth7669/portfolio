@@ -1,0 +1,111 @@
+---
+title: "From 1,207 SQL Scripts to 4 Python Scripts: Optimizing an Enterprise ETL Workflow"
+publishedAt: "2026-10-23"
+summary: "A real-world data engineering case study on simplifying a complex ETL workflow with Python and Azure Synapse Analytics—and what I learned from my first Azure Synapse project."
+---
+
+# From 1,200+ SQL Scripts to 4 Python Scripts: Building an Enterprise ETL Workflow with Azure Synapse
+
+One of the most memorable data engineering projects I worked on involved modernizing an enterprise ETL (Extract, Transform, Load) workflow. The existing process relied on **more than 1,200 SQL scripts** for data transformation. Our goal was to simplify the implementation, make it easier to maintain, and improve execution performance.
+
+This project was also **my first hands-on experience with Azure Synapse Analytics**. I had to learn the platform while solving a real engineering problem, which made the experience especially valuable.
+
+> **Confidentiality note:** This article describes the engineering approach at a high level. It intentionally omits proprietary data, schemas, business rules, and internal implementation details. Any code shown is illustrative, not production code.
+
+## Understanding the ETL workflow
+
+The pipeline processed data through multiple transformation stages:
+
+```text
+Raw data
+   |
+   v
+Enriched data
+   |
+   v
+Curated data
+```
+
+The **raw layer** contained incoming data. The **enriched layer** applied transformations and business logic. The **curated layer** prepared data for downstream consumption.
+
+A layered design is useful, but the implementation had grown complex: transformation logic was spread across **1,207 SQL scripts**. That volume made it harder to understand the end-to-end flow and maintain repeated patterns consistently.
+
+## The engineering challenge
+
+The challenge was not simply to translate SQL syntax into Python. A successful redesign needed to preserve the intended transformations while reducing duplication and unnecessary execution overhead.
+
+We focused on three questions:
+
+1. Which transformation patterns were repeated across scripts?
+2. Which parts of the workflow could be expressed as reusable, parameterized Python logic?
+3. How could independent processing work be executed more efficiently?
+
+## Consolidating scripts into reusable Python logic
+
+We replaced the large collection of SQL scripts with **four Python scripts** built around reusable transformation logic.
+
+Rather than maintaining a separate script for every similar operation, we organized the workflow so that common processing steps could be reused with different inputs and configuration.
+
+Here is a **simplified illustration** of the idea—not code from the enterprise project:
+
+```python
+from collections.abc import Callable
+
+
+def run_transformations(
+    datasets: dict[str, list[dict]],
+    transforms: dict[str, Callable[[list[dict]], list[dict]]],
+) -> dict[str, list[dict]]:
+    results = {}
+
+    for dataset_name, rows in datasets.items():
+        transform = transforms[dataset_name]
+        results[dataset_name] = transform(rows)
+
+    return results
+```
+
+The important principle is **separating reusable processing logic from dataset-specific behavior**. This reduces copy-pasted code and makes changes easier to manage.
+
+## Improving execution with parallel processing
+
+We also used **parallel processing** to reduce execution time where work could be performed independently.
+
+Parallel execution is not automatically faster: tasks must be sufficiently independent, and the overhead of scheduling and moving data must be considered. For our workflow, identifying work that could run concurrently was an important part of the optimization.
+
+The outcome was an **approximately 7× improvement in execution speed** compared with the previous approach.
+
+That result reflected the combined redesign of the workflow; it should not be interpreted as a benchmark of Python versus SQL in general. SQL remains an excellent choice for many set-based transformations.
+
+## My first experience with Azure Synapse Analytics
+
+Before this project, I had not worked hands-on with **Azure Synapse Analytics**. Learning a new data platform while contributing to a production-oriented ETL modernization effort was challenging, but it gave me practical exposure to how enterprise data workflows are organized and operated in Azure.
+
+The biggest learning was that data engineering goes beyond writing transformation code. It also requires understanding dependencies between stages, execution behavior, data correctness, performance, and maintainability.
+
+I became more comfortable reasoning about a complete pipeline rather than looking at each SQL script in isolation.
+
+## Results
+
+| Area | Before | After |
+| --- | --- | --- |
+| Transformation implementation | 1,207 SQL scripts | 4 reusable Python scripts |
+| Processing approach | Large collection of individual scripts | Consolidated logic with parallel processing |
+| Execution performance | Baseline | Approximately 7× faster |
+| Maintainability | Many separate scripts to manage | Smaller, more reusable codebase |
+
+These are project-level outcomes, not a claim that every individual transformation improved by the same amount.
+
+## What I learned
+
+- **Understand the workflow before optimizing it.** A large number of scripts may indicate repeated patterns, but those patterns must be identified carefully.
+- **Reuse reduces maintenance effort.** Parameterized logic can replace many nearly identical implementations.
+- **Parallelism requires judgment.** Only independent work should be run concurrently, and bottlenecks should be measured.
+- **Correctness comes first.** An ETL redesign is only successful when transformed data still meets the required expectations.
+- **Learning on a real project is powerful.** My first Azure Synapse experience taught me how platform knowledge and software engineering practices come together in enterprise data systems.
+
+## Final thoughts
+
+This project changed how I think about data pipelines. Instead of treating ETL as a long sequence of individual SQL scripts, I learned to approach it as a **maintainable system of reusable transformations and execution stages**.
+
+Going from **1,207 SQL scripts to four Python scripts**, with an **approximately 7× performance improvement**, was a meaningful engineering result—and a strong introduction to **Azure Synapse Analytics**.

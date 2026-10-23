@@ -1,0 +1,52 @@
+---
+title: "Building a RAG Chatbot for Ashtanghridayam"
+publishedAt: "2026-10-23"
+summary: "How I designed a chapter-aware retrieval chatbot for Sanskrit medical learning, and what I learned from a project that did not reach production."
+---
+
+# Building a RAG Chatbot for Ashtanghridayam
+
+I worked on a retrieval-augmented generation (RAG) chatbot for a government Sanskrit medical college. The goal was to make a large collection of **Ashtanghridayam** learning materials easier to explore through a conversational interface.
+
+The source material was provided as PDFs, organized into chapters with Sanskrit shlokas and supporting content. Instead of expecting students to manually search across documents, we wanted them to ask questions in natural language, including languages other than Sanskrit.
+
+## Why RAG?
+
+A general-purpose language model can produce plausible answers that are not grounded in a particular textbook. RAG helps by retrieving relevant passages from the source documents and including them as context when generating an answer.
+
+The intended workflow was:
+
+1. Extract and clean text from the PDFs.
+2. Organize passages into meaningful chunks.
+3. Index the chunks for retrieval.
+4. Retrieve relevant material for a student's question.
+5. Pass the retrieved context and question to a language model.
+6. Display a response in a chat-style interface.
+
+## Chunking by chapter
+
+Chunk size matters. Very small chunks can lose context, while very large chunks can make retrieval less precise.
+
+The material contained many chapters, often with around eight to ten shlokas per chapter. I chose a **chapter-oriented chunking approach**, targeting roughly **750–800 tokens** per chunk. This helped preserve the relationship between shlokas and their surrounding explanations.
+
+The chapter boundaries were a useful starting point, not a guarantee that every chapter would have exactly the same token count. A production version would need careful handling of oversized chapters and metadata such as chapter names and source locations.
+
+## Supporting multilingual questions
+
+The interface was designed so students could ask questions in their preferred language. The retrieval system would look for relevant source material and the model would use that material to compose an answer.
+
+For a subject with Sanskrit terminology, this introduces challenges: transliteration differences, spelling variations, translation quality, and the risk of losing nuance. Grounding responses in retrieved passages is important, but it does not eliminate these issues.
+
+## What I learned
+
+This project reinforced three practical lessons:
+
+- **Document structure matters.** Preserving chapter boundaries can improve how retrieved context is understood.
+- **Retrieval quality matters as much as generation.** A strong language model cannot reliably answer from source material it never receives.
+- **Source transparency matters.** Showing the chapter or passage behind an answer would make the tool more useful for students and teachers.
+
+## Project outcome
+
+**The chatbot did not reach production.** The college decided not to proceed, so I do not present it as a deployed system or claim student adoption metrics. It was still a valuable hands-on exercise in PDF processing, chunking strategy, retrieval, and LLM integration.
+
+The system was intended as an educational reference tool, **not a substitute for medical advice or clinical judgment**.

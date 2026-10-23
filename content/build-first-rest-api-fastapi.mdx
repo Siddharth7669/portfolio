@@ -1,0 +1,119 @@
+---
+title: "Build Your First REST API with Python and FastAPI"
+publishedAt: "2026-10-22"
+summary: "Create a small Python API and learn routes, request validation, response models, and basic error handling with FastAPI."
+---
+
+# Build Your First REST API with Python and FastAPI
+
+A REST API lets applications exchange data over HTTP. For example, a frontend can send a request to a backend to retrieve a list of tasks or create a new record.
+
+FastAPI is a Python framework for building APIs. It uses Python type hints for request validation and generates interactive API documentation automatically.
+
+## 1. Install FastAPI
+
+Create and activate a virtual environment, then install the packages:
+
+```bash
+python -m venv .venv
+pip install fastapi uvicorn
+```
+
+Run commands to activate the environment according to your operating system. Keeping dependencies in a virtual environment helps isolate this project from other Python applications.
+
+## 2. Create the application
+
+Create a file named `main.py`:
+
+```python
+from fastapi import FastAPI, HTTPException
+from pydantic import BaseModel
+
+app = FastAPI(title="Task API")
+
+
+class TaskCreate(BaseModel):
+    title: str
+    completed: bool = False
+
+
+tasks: dict[int, dict] = {}
+next_id = 1
+
+
+@app.get("/health")
+def health_check():
+    return {"status": "ok"}
+
+
+@app.get("/tasks")
+def list_tasks():
+    return list(tasks.values())
+
+
+@app.post("/tasks", status_code=201)
+def create_task(task: TaskCreate):
+    global next_id
+
+    new_task = {
+        "id": next_id,
+        "title": task.title,
+        "completed": task.completed,
+    }
+    tasks[next_id] = new_task
+    next_id += 1
+
+    return new_task
+
+
+@app.get("/tasks/{task_id}")
+def get_task(task_id: int):
+    task = tasks.get(task_id)
+
+    if task is None:
+        raise HTTPException(status_code=404, detail="Task not found")
+
+    return task
+```
+
+This is a learning example. The data is stored in memory, so it will be lost when the application restarts. A real application should use a persistent database.
+
+## 3. Understand the routes
+
+- `GET /health` checks whether the service responds.
+- `GET /tasks` returns the tasks currently stored in memory.
+- `POST /tasks` validates a request body and creates a task.
+- `GET /tasks/{task_id}` retrieves a task by its ID.
+
+The `TaskCreate` model defines the expected request body. If a client sends a value of the wrong type or omits a required field, FastAPI can return a validation error.
+
+## 4. Run the API
+
+Start the local development server:
+
+```bash
+uvicorn main:app --reload
+```
+
+Open `http://127.0.0.1:8000/docs` in your browser to try the endpoints through FastAPI's interactive documentation.
+
+For example, send this JSON body to `POST /tasks`:
+
+```json
+{
+  "title": "Learn FastAPI",
+  "completed": false
+}
+```
+
+You should receive a response containing the new task and its generated ID.
+
+## 5. Why use response models?
+
+Request models validate incoming data. Response models can define the shape of data returned to clients. For larger APIs, explicit response models make the API contract easier to understand and maintain.
+
+You should also consider database persistence, authentication, logging, tests, and consistent error responses before deploying an API to production.
+
+## Final thoughts
+
+A small API is a good way to learn the request-response cycle. Once the basics are clear, replace the in-memory dictionary with a database, separate routes from business logic, and write tests for successful requests and failure cases.

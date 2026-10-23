@@ -1,0 +1,70 @@
+---
+title: "Lane Line Detection with OpenCV: From Edges to Lines"
+publishedAt: "2026-10-23"
+summary: "An overview of my computer vision work using Canny edge detection and the Hough Transform, with a link to the published IEEE paper."
+---
+
+# Lane Line Detection with OpenCV: From Edges to Lines
+
+Lane line detection is a classic computer vision problem: given a road image, identify the markings that help define driving lanes. I worked on this problem using **Python and OpenCV**, applying techniques such as **Canny edge detection** and the **Hough Transform**.
+
+The work was published as an IEEE conference paper. You can find it here: [Read the paper on IEEE Xplore](https://ieeexplore.ieee.org/document/10064598).
+
+## The basic pipeline
+
+A traditional lane detection pipeline can be broken into a few understandable stages:
+
+1. Read an image or video frame.
+2. Convert it to grayscale and reduce noise.
+3. Use Canny edge detection to highlight strong intensity changes.
+4. Restrict processing to a road-shaped region of interest.
+5. Apply a Hough Transform to identify candidate straight-line segments.
+6. Filter or combine segments to estimate the visible lane markings.
+
+These steps are an accessible way to understand the approach; the linked paper is the reference for the actual research implementation and results.
+
+## Why Canny edge detection?
+
+Lane markings often create contrast with the road surface. Canny helps detect those boundaries while suppressing some image noise.
+
+Here is a simplified illustrative example:
+
+```python
+import cv2
+
+image = cv2.imread("road.jpg")
+gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+blurred = cv2.GaussianBlur(gray, (5, 5), 0)
+edges = cv2.Canny(blurred, 50, 150)
+```
+
+The threshold values are examples, not universal settings. Lighting, road color, camera position, and image quality all affect what works best.
+
+## Why the Hough Transform?
+
+Canny returns edge pixels, not complete lane lines. The Hough Transform helps detect line structures among those pixels.
+
+```python
+lines = cv2.HoughLinesP(
+    edges,
+    rho=1,
+    theta=3.14159 / 180,
+    threshold=50,
+    minLineLength=40,
+    maxLineGap=100,
+)
+```
+
+In practice, I would also use a region-of-interest mask and line filtering. Without those steps, road signs, shadows, barriers, and other edges can be mistaken for lane markings.
+
+## Where traditional methods struggle
+
+This style of pipeline works best when lane markings are reasonably visible and road geometry is predictable. It becomes less reliable with faded paint, sharp curves, heavy shadows, rain, glare, or occlusion by other vehicles.
+
+These limitations are a useful reminder that a demonstration on selected road images is not the same as a road-ready driver assistance system.
+
+## Takeaway
+
+This project strengthened my understanding of **image preprocessing, feature extraction, geometric filtering, and evaluating computer vision output**. It also taught me to be precise about what an algorithm can detect and the conditions under which it fails.
+
+**Publication:** [IEEE Xplore — Lane Line Detection Paper](https://ieeexplore.ieee.org/document/10064598)

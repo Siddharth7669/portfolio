@@ -1,0 +1,134 @@
+---
+title: "Python Fundamentals: Variables, Data Types, and Control Flow"
+publishedAt: "2026-10-22"
+summary: "A beginner-friendly introduction to Python variables, built-in data types, conditions, loops, and functions with runnable examples."
+---
+
+# Python Fundamentals: Variables, Data Types, and Control Flow
+
+Python is a popular programming language because its syntax is readable and it can be used for web development, automation, data analysis, and AI applications. If you are new to programming, start by learning how to store values, make decisions, repeat work, and organize code into functions.
+
+## 1. Variables
+
+A variable is a name that refers to a value.
+
+```python
+name = "Asha"
+experience_years = 2
+is_learning_python = True
+
+print(name)
+print(experience_years)
+print(is_learning_python)
+```
+
+Python determines the type of a value at runtime, so you do not need to declare a variable's type before assigning it.
+
+## 2. Common data types
+
+Here are some data types you will use frequently:
+
+```python
+name = "Asha"                    # str: text
+age = 24                          # int: whole number
+rating = 4.5                      # float: decimal number
+is_available = True               # bool: True or False
+skills = ["Python", "SQL"]        # list: ordered collection
+profile = {"name": "Asha", "age": 24}  # dict: key-value pairs
+```
+
+You can inspect a value's type with `type()`:
+
+```python
+print(type(name))
+print(type(age))
+```
+
+Choose a data structure based on how you need to use the data. A list is useful for an ordered collection; a dictionary is useful when values are accessed by named keys.
+
+## 3. Conditions
+
+Conditions let a program choose what to do.
+
+```python
+score = 78
+
+if score >= 80:
+    print("Excellent")
+elif score >= 60:
+    print("Passed")
+else:
+    print("Keep practicing")
+```
+
+Python uses indentation to define the blocks belonging to `if`, `elif`, and `else`. Consistent indentation is part of the language syntax.
+
+## 4. Loops
+
+Use a `for` loop to process each item in a collection:
+
+```python
+skills = ["Python", "FastAPI", "SQL"]
+
+for skill in skills:
+    print(f"I am learning {skill}")
+```
+
+Use a `while` loop when repetition depends on a condition:
+
+```python
+attempts = 0
+
+while attempts < 3:
+    print("Practice one problem")
+    attempts += 1
+```
+
+Make sure a `while` loop can eventually stop. If its condition never becomes false, it may run indefinitely.
+
+## 5. Functions
+
+Functions package reusable logic into a named block.
+
+```python
+def calculate_average(first, second):
+    return (first + second) / 2
+
+result = calculate_average(80, 90)
+print(result)  # 85.0
+```
+
+The parameters `first` and `second` receive input values. `return` sends the calculated result back to the caller.
+
+## 6. A small combined example
+
+This example uses a list, a loop, a condition, and a function:
+
+```python
+def classify_score(score):
+    if score >= 60:
+        return "Pass"
+    return "Needs improvement"
+
+
+scores = [45, 72, 88]
+
+for score in scores:
+    print(score, classify_score(score))
+```
+
+Output:
+
+```text
+45 Needs improvement
+72 Pass
+88 Pass
+```
+
+Try changing the scores and adding more conditions. Experimenting with small programs is one of the fastest ways to make the concepts familiar.
+
+## What to learn next
+
+After these fundamentals, study strings and list operations, dictionaries and sets, exceptions, file handling, modules, and classes. Then build a small project, such as a command-line task tracker or a simple REST API.
+
+The goal is not to memorize every feature. It is to understand the basic building blocks well enough to combine them into useful programs.

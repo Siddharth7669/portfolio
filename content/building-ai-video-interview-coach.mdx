@@ -1,0 +1,68 @@
+---
+title: "Building an AI Video Interview Coach with Azure OpenAI"
+publishedAt: "2026-10-22"
+summary: "A practical look at the pipeline behind an AI interview coach, from video storage and transcription to contextual feedback and background task processing."
+---
+
+# Building an AI Video Interview Coach with Azure OpenAI
+
+Interview practice is more useful when candidates receive specific feedback instead of a simple score. That idea shaped the AI Video Coach I worked on for TieOpp, a career platform for students and enterprises.
+
+The goal was to help candidates review their spoken interview responses and understand where they could improve, including grammar, pronunciation, fluency, repetition, and the relevance of their answers.
+
+## The problem
+
+A video interview response contains several kinds of information. The spoken words matter, but so do clarity, fluency, and how well the response addresses the question. A useful coaching workflow needs to process the recording, interpret its transcript in context, and return feedback in a form the application can store and display.
+
+A language model alone does not handle the entire workflow. The application also needs video storage, transcription, API orchestration, persistence, and a way to manage processing load.
+
+## The high-level workflow
+
+The system follows a pipeline:
+
+1. **Capture the response.** A candidate records a response to a selected interview question.
+2. **Store the video.** The recording is uploaded to Azure Blob Storage.
+3. **Generate a transcript.** A speech-to-text step converts the spoken response into text.
+4. **Prepare the model input.** The backend combines the transcript with relevant context, such as the interview question and category.
+5. **Generate feedback.** Azure OpenAI GPT-4o-mini is used to produce contextual feedback.
+6. **Persist the result.** Structured feedback is saved in the SQL database so the application can retrieve it later.
+7. **Manage background work.** Redis-based task queuing helps control concurrent processing and reduce pressure on the API workflow.
+
+## Why context matters
+
+A transcript by itself is not enough to evaluate an interview answer. The model needs to know what the candidate was asked. For example, a short response might be appropriate for one question but incomplete for another.
+
+Providing the question and interview category alongside the transcript helps the model generate feedback that is more relevant to the task. The output should also follow a predictable structure so the frontend can display individual feedback categories consistently.
+
+## The role of FastAPI
+
+FastAPI provides the backend endpoints that connect the application workflow. The API layer coordinates the relevant steps, handles application data, and makes the resulting feedback available to the frontend.
+
+Keeping responsibilities separate makes the system easier to maintain. Video storage, transcription, model inference, and database persistence are different tasks, and each can be monitored and improved independently.
+
+## Managing processing load with Redis
+
+LLM-powered workflows can be resource-intensive, particularly when multiple users submit responses around the same time. If every request performs all processing synchronously, API workers may remain occupied while waiting for external services.
+
+I implemented Redis-based task queuing to help manage concurrent workloads. A queue allows processing to be handled more deliberately instead of putting the full workload directly on the request path. This approach improves workload management, though queue configuration, retries, timeouts, and monitoring are still important for production reliability.
+
+## What I learned
+
+Building this feature reinforced a practical lesson: production AI is more than a prompt and a model call. A reliable application needs a complete data flow, clear API boundaries, structured outputs, persistence, and a plan for handling spikes in demand.
+
+It also highlighted the importance of evaluating feedback quality. Model output should be checked against representative interview responses, and the system should avoid presenting subjective judgments as definitive facts.
+
+## Technology stack
+
+- Python and FastAPI
+- Azure OpenAI GPT-4o-mini
+- Speech-to-text processing
+- Azure Blob Storage
+- Redis task queuing
+- SQL and REST APIs
+
+## Final thoughts
+
+The AI Video Coach combines backend engineering with applied LLM functionality. The most valuable part is not simply generating text; it is connecting storage, transcription, contextual analysis, and persistence into a workflow that candidates can use.
+
+You can explore the platform at [TieOpp](https://tieopp.com).

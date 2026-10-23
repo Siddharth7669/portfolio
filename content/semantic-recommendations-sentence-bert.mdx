@@ -1,0 +1,103 @@
+---
+title: "How Semantic Recommendations Work with Sentence-BERT"
+publishedAt: "2026-10-22"
+summary: "Understand text embeddings, similarity matching, and practical ways to make recommendation retrieval more efficient."
+---
+
+# How Semantic Recommendations Work with Sentence-BERT
+
+A recommendation system helps users discover items that are relevant to their interests. In a career platform, those items might be internships, projects, learning opportunities, or events.
+
+A keyword-based system can miss relevant matches when two descriptions use different words to express similar ideas. Semantic representations help address this problem by representing text as numerical vectors.
+
+## 1. What is a text embedding?
+
+An embedding is a vector of numbers that represents information such as a sentence or paragraph. A sentence embedding model maps text into a vector space where semantically related text may be positioned closer together.
+
+For example, these descriptions use different words but may express related interests:
+
+- "Looking for a Python backend internship."
+- "Entry-level role developing APIs with Python."
+
+A semantic model can help identify their similarity even though the wording is not identical.
+
+## 2. The basic recommendation pipeline
+
+A simple semantic recommendation workflow can be organized into several steps:
+
+1. Collect and clean the text describing users and opportunities.
+2. Generate embeddings using a sentence embedding model such as Sentence-BERT.
+3. Store the embeddings alongside the records they represent.
+4. Convert a user's profile or query into an embedding.
+5. Compare the query embedding with candidate opportunity embeddings.
+6. Rank results by similarity and apply business rules or eligibility filters.
+
+This separates semantic relevance from other rules, such as location, availability, or required qualifications.
+
+## 3. Similarity matching
+
+Cosine similarity is commonly used to compare vectors. For vectors `a` and `b`, it measures the cosine of the angle between them:
+
+```text
+similarity(a, b) = (a · b) / (||a|| × ||b||)
+```
+
+A higher cosine similarity often indicates that two embeddings point in a more similar direction. It is a relevance signal, not a guarantee that a recommendation is suitable. The model, input quality, and domain all affect the result.
+
+## 4. A simple implementation
+
+The following example demonstrates the idea using the `sentence-transformers` package:
+
+```python
+from sentence_transformers import SentenceTransformer
+from sklearn.metrics.pairwise import cosine_similarity
+
+model = SentenceTransformer("all-MiniLM-L6-v2")
+
+opportunities = [
+    "Python backend internship building REST APIs",
+    "Graphic design internship for digital campaigns",
+    "Data analysis role using Python and SQL",
+]
+
+query = "I want to develop APIs with Python"
+
+opportunity_vectors = model.encode(opportunities)
+query_vector = model.encode([query])
+
+scores = cosine_similarity(query_vector, opportunity_vectors)[0]
+ranked_indices = scores.argsort()[::-1]
+
+for index in ranked_indices:
+    print(f"{scores[index]:.3f} - {opportunities[index]}")
+```
+
+Install the required packages before running it:
+
+```bash
+pip install sentence-transformers scikit-learn
+```
+
+The first model run may download model files. Similarity scores should be interpreted comparatively and validated with examples from your actual application.
+
+## 5. Improving retrieval efficiency
+
+In my work on TieOpp, I worked on a semantic recommendation system using Sentence-BERT embeddings and similarity matching. I also optimized retrieval using index-based matching to reduce processing overhead and improve response times.
+
+The right optimization depends on where the cost comes from. Recomputing embeddings unnecessarily, comparing against too many records, and repeatedly loading data can all add overhead. Reusing stored embeddings and narrowing the candidate set can help.
+
+For large datasets, vector indexes or approximate nearest-neighbor search may be appropriate. Any optimization should be measured against both latency and recommendation quality rather than assuming that faster retrieval is automatically better.
+
+## 6. Evaluating recommendation quality
+
+A recommendation system needs evaluation as well as implementation. Useful checks include:
+
+- **Relevance:** Are the top results useful for the user's request?
+- **Coverage:** Does the system surface a diverse range of suitable opportunities?
+- **Latency:** How long does it take to return results?
+- **Eligibility:** Are unsuitable or unavailable items filtered out?
+- **Feedback:** Do user interactions indicate that the results are helpful?
+
+## Final thoughts
+
+Embeddings provide a useful way to compare text by meaning rather than relying only on exact keywords. In production, however, a good recommendation system also needs clean data, eligibility rules, performance monitoring, and regular evaluation.
