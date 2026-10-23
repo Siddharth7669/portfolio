@@ -9,7 +9,7 @@ import ContactSection from "@/components/section/contact-section";
 import HackathonsSection from "@/components/section/hackathons-section";
 import ProjectsSection from "@/components/section/projects-section";
 import WorkSection from "@/components/section/work-section";
-import { ArrowUpRight } from "lucide-react";
+import { ArrowUpRight, Download, FileText } from "lucide-react";
 
 const BLUR_FADE_DELAY = 0.04;
 
@@ -31,6 +31,29 @@ export default function Page() {
                 delay={BLUR_FADE_DELAY}
                 text={DATA.description}
               />
+              <BlurFade delay={BLUR_FADE_DELAY * 2}>
+                <div className="flex flex-wrap items-center gap-3 mt-3">
+                  <a
+                    href="/Siddharth Pandey Resume.pdf"
+                    download="Siddharth Pandey Resume.pdf"
+                    className="inline-flex items-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-opacity hover:opacity-90"
+                  >
+                    <Download className="size-4" />
+                    Download Resume
+                  </a>
+
+                  <a
+                    href="/Siddharth Pandey Resume.pdf"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 rounded-lg border border-border bg-background px-4 py-2 text-sm font-medium transition-colors hover:bg-muted"
+                  >
+                    <FileText className="size-4" />
+                    View Resume
+                    <ArrowUpRight className="size-3.5" />
+                  </a>
+                </div>
+              </BlurFade>
             </div>
             <BlurFade delay={BLUR_FADE_DELAY} className="order-1 md:order-2">
               <Avatar className="size-24 md:size-32 border rounded-full shadow-lg ring-4 ring-muted">
@@ -48,9 +71,7 @@ export default function Page() {
           </BlurFade>
           <BlurFade delay={BLUR_FADE_DELAY * 4}>
             <div className="prose max-w-full text-pretty font-sans leading-relaxed text-muted-foreground dark:prose-invert">
-              <Markdown>
-                {DATA.summary}
-              </Markdown>
+              <Markdown>{DATA.summary}</Markdown>
             </div>
           </BlurFade>
         </div>
@@ -95,7 +116,10 @@ export default function Page() {
                     <div className="flex-1 min-w-0 flex flex-col gap-0.5">
                       <div className="font-semibold leading-none flex items-center gap-2">
                         {education.school}
-                        <ArrowUpRight className="h-3.5 w-3.5 text-muted-foreground opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-200" aria-hidden />
+                        <ArrowUpRight
+                          className="h-3.5 w-3.5 text-muted-foreground opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-200"
+                          aria-hidden
+                        />
                       </div>
                       <div className="font-sans text-sm text-muted-foreground">
                         {education.degree}
@@ -113,23 +137,46 @@ export default function Page() {
           </div>
         </div>
       </section>
+
       <section id="skills">
-        <div className="flex min-h-0 flex-col gap-y-4">
+        <div className="flex min-h-0 flex-col gap-y-6">
           <BlurFade delay={BLUR_FADE_DELAY * 9}>
             <h2 className="text-xl font-bold">Skills</h2>
           </BlurFade>
-          <div className="flex flex-wrap gap-2">
-            {DATA.skills.map((skill, id) => (
-              <BlurFade key={skill.name} delay={BLUR_FADE_DELAY * 10 + id * 0.05}>
-                <div className="border bg-background border-border ring-2 ring-border/20 rounded-xl h-8 w-fit px-4 flex items-center gap-2">
-                  {skill.icon && <skill.icon className="size-4 rounded overflow-hidden object-contain" />}
-                  <span className="text-foreground text-sm font-medium">{skill.name}</span>
+
+          <div className="flex flex-col gap-5">
+            {DATA.skills.map((group, groupId) => (
+              <BlurFade
+                key={group.category}
+                delay={BLUR_FADE_DELAY * 10 + groupId * 0.05}
+              >
+                <div className="flex flex-col gap-3">
+                  <h3 className="text-sm font-semibold text-muted-foreground">
+                    {group.category}
+                  </h3>
+
+                  <div className="flex flex-wrap gap-2">
+                    {group.items.map((skill) => (
+                      <div
+                        key={skill.name}
+                        className="border bg-background border-border ring-2 ring-border/20 rounded-xl min-h-8 w-fit px-3 py-1.5 flex items-center gap-2"
+                      >
+                        {skill.icon && (
+                          <skill.icon className="size-4 shrink-0 rounded object-contain" />
+                        )}
+                        <span className="text-foreground text-sm font-medium">
+                          {skill.name}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               </BlurFade>
             ))}
           </div>
         </div>
       </section>
+
       <section id="projects">
         <BlurFade delay={BLUR_FADE_DELAY * 11}>
           <ProjectsSection />

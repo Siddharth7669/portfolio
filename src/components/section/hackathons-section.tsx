@@ -19,9 +19,7 @@ export default function HackathonsSection() {
           <div className="flex flex-col gap-y-3 items-center justify-center">
             <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl">I like building things</h2>
             <p className="text-muted-foreground md:text-lg/relaxed lg:text-base/relaxed xl:text-lg/relaxed text-balance text-center">
-              During my time in university, I attended {DATA.hackathons.length}+
-              hackathons. People from around the country would come together and
-              build incredible things in 2-3 days. It was eye-opening to see the endless possibilities brought to life by a group of motivated and passionate individuals.
+              During university, I participated in multiple hackathons, securing 3rd place at Smart India Hackathon 2022 and Hacknovate 2.0 in 2021. I also participated in Hacktoberfest 2021. These experiences strengthened my problem-solving, teamwork, and ability to build practical solutions under tight deadlines.
             </p>
           </div>
         </div>

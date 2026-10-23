@@ -62,7 +62,7 @@ export function ProjectCard({
       )}
     >
       <div className="relative shrink-0">
-        <Link
+        {/* <Link
           href={href || "#"}
           target="_blank"
           rel="noopener noreferrer"
@@ -82,7 +82,7 @@ export function ProjectCard({
           ) : (
             <div className="w-full h-48 bg-muted" />
           )}
-        </Link>
+        </Link> */}
         {links && links.length > 0 && (
           <div className="absolute top-2 right-2 flex flex-wrap gap-2">
             {links.map((link, idx) => (
